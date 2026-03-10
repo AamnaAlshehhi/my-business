@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>نظام إدارة حلويات البسبوسة</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon">🍰</span>
+        <div>
+          <h1>نظام إدارة البسبوسة</h1>
+          <p class="brand-sub">تتبع التكاليف · الوصفات · المبيعات · الأرباح</p>
+        </div>
+      </div>
+      <div id="header-date" class="header-date"></div>
+    </div>
+  </header>
+
+  <!-- ===== NAV TABS ===== -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="dashboard">🏠 لوحة التحكم</button>
+    <button class="tab-btn" data-tab="ingredients">🛒 المكونات</button>
+    <button class="tab-btn" data-tab="purchases">📦 المشتريات</button>
+    <button class="tab-btn" data-tab="recipe">📋 الوصفة</button>
+    <button class="tab-btn" data-tab="production">🏭 الإنتاج</button>
+    <button class="tab-btn" data-tab="sales">💰 المبيعات</button>
+    <button class="tab-btn" data-tab="reports">📊 التقارير</button>
+  </nav>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+
+    <!-- ══════════════════════════════════════
+         TAB 1 · DASHBOARD
+    ══════════════════════════════════════ -->
+    <section id="tab-dashboard" class="tab-section active">
+      <h2 class="section-title">لوحة التحكم</h2>
+
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-blue">
+          <div class="kpi-label">تكلفة القطعة</div>
+          <div class="kpi-value" id="dash-cost-per-piece">—</div>
+          <div class="kpi-sub">بناءً على آخر إنتاج</div>
+        </div>
+        <div class="kpi-card kpi-green">
+          <div class="kpi-label">سعر بيع القطعة</div>
+          <div class="kpi-value" id="dash-sell-price">—</div>
+          <div class="kpi-sub">متوسط آخر 30 يوم</div>
+        </div>
+        <div class="kpi-card kpi-purple">
+          <div class="kpi-label">ربح القطعة</div>
+          <div class="kpi-value" id="dash-profit-piece">—</div>
+          <div class="kpi-sub">سعر البيع − تكلفة الإنتاج</div>
+        </div>
+        <div class="kpi-card kpi-orange">
+          <div class="kpi-label">إجمالي ربح الشهر</div>
+          <div class="kpi-value" id="dash-month-profit">—</div>
+          <div class="kpi-sub" id="dash-month-label">الشهر الحالي</div>
+        </div>
+        <div class="kpi-card kpi-teal">
+          <div class="kpi-label">مبيعات هذا الشهر</div>
+          <div class="kpi-value" id="dash-month-revenue">—</div>
+          <div class="kpi-sub">إجمالي الإيرادات</div>
+        </div>
+        <div class="kpi-card kpi-red">
+          <div class="kpi-label">تكاليف هذا الشهر</div>
+          <div class="kpi-value" id="dash-month-cost">—</div>
+          <div class="kpi-sub">مشتريات + إنتاج</div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="card">
+          <h3 class="card-title">📅 ملخص اليوم</h3>
+          <div id="dash-today-summary" class="summary-block">لا توجد مبيعات اليوم.</div>
+        </div>
+        <div class="card">
+          <h3 id="dash-low-stock-title" class="card-title">📦 حالة المخزون</h3>
+          <div id="dash-low-stock" class="summary-block">المخزون كافٍ.</div>
+        </div>
+        <div class="card">
+          <h3 class="card-title">🕒 آخر المبيعات</h3>
+          <div id="dash-recent-sales" class="summary-block">لا توجد مبيعات بعد.</div>
+        </div>
+        <div class="card">
+          <h3 class="card-title">🏭 آخر الإنتاج</h3>
+          <div id="dash-recent-production" class="summary-block">لا يوجد إنتاج مسجل.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         TAB 2 · INGREDIENTS
+    ══════════════════════════════════════ -->
+    <section id="tab-ingredients" class="tab-section">
+      <div class="section-header">
+        <h2 class="section-title">إدارة المكونات</h2>
+        <button class="btn btn-primary" onclick="Ingredients.openAdd()">+ إضافة مكوّن</button>
+      </div>
+      <div class="ing-filter-bar">
+        <button class="ing-filter-btn active" data-filter="all" onclick="Ingredients.setFilter('all')">الكل</button>
+        <button class="ing-filter-btn" data-filter="food" onclick="Ingredients.setFilter('food')">🍞 مكونات غذائية</button>
+        <button class="ing-filter-btn" data-filter="packaging" onclick="Ingredients.setFilter('packaging')">📦 تغليف وملصقات</button>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table id="tbl-ingredients">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>اسم المكوّن</th>
+                <th>التصنيف</th>
+                <th>الوحدة</th>
+                <th>سعر الشراء</th>
+                <th>الكمية في المخزون</th>
+                <th>الحد الأدنى</th>
+                <th>قيمة المخزون</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-ingredients">
+              <tr><td colspan="9" class="empty-row">لا توجد مكونات مضافة بعد.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         TAB 3 · PURCHASES
+    ══════════════════════════════════════ -->
+    <section id="tab-purchases" class="tab-section">
+      <div class="section-header">
+        <h2 class="section-title">تسجيل المشتريات</h2>
+        <button class="btn btn-primary" onclick="Purchases.openAdd()">+ تسجيل شراء</button>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table id="tbl-purchases">
+            <thead>
+              <tr>
+                <th>التاريخ</th>
+                <th>المكوّن</th>
+                <th>الكمية</th>
+                <th>سعر الوحدة</th>
+                <th>الإجمالي</th>
+                <th>المورد</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-purchases">
+              <tr><td colspan="7" class="empty-row">لا توجد مشتريات مسجلة.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         TAB 4 · RECIPE
+    ══════════════════════════════════════ -->
+    <section id="tab-recipe" class="tab-section">
+      <div class="section-header">
+        <h2 class="section-title">وصفة البسبوسة</h2>
+        <button class="btn btn-primary" onclick="Recipes.openAdd()">+ إنشاء وصفة</button>
+      </div>
+
+      <div id="recipe-list" class="recipe-grid">
+        <div class="empty-state">لا توجد وصفات بعد. أضف وصفة لحساب تكلفة الصينية.</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         TAB 5 · PRODUCTION
+    ══════════════════════════════════════ -->
+    <section id="tab-production" class="tab-section">
+      <div class="section-header">
+        <h2 class="section-title">تسجيل الإنتاج</h2>
+        <button class="btn btn-primary" onclick="Productions.openAdd()">+ تسجيل إنتاج</button>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>التاريخ</th>
+                <th>الوصفة</th>
+                <th>عدد الصوانٍ</th>
+                <th>عدد القطع</th>
+                <th>تكلفة الصينية</th>
+                <th>تكلفة القطعة</th>
+                <th>ملاحظات</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-production">
+              <tr><td colspan="8" class="empty-row">لا يوجد إنتاج مسجل.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         TAB 6 · SALES
+    ══════════════════════════════════════ -->
+    <section id="tab-sales" class="tab-section">
+      <div class="section-header">
+        <h2 class="section-title">تسجيل المبيعات</h2>
+        <button class="btn btn-primary" onclick="Sales.openAdd()">+ تسجيل بيع</button>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>التاريخ</th>
+                <th>الوصفة</th>
+                <th>النوع</th>
+                <th>الكمية</th>
+                <th>سعر البيع/وحدة</th>
+                <th>التكلفة/وحدة</th>
+                <th>الإيراد</th>
+                <th>الربح</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-sales">
+              <tr><td colspan="9" class="empty-row">لا توجد مبيعات مسجلة.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         TAB 7 · REPORTS
+    ══════════════════════════════════════ -->
+    <section id="tab-reports" class="tab-section">
+      <h2 class="section-title">التقارير والأرباح</h2>
+
+      <div class="report-filters card">
+        <div class="form-row">
+          <div class="form-group">
+            <label>الفترة</label>
+            <select id="report-period" onchange="Reports.render()">
+              <option value="today">اليوم</option>
+              <option value="week">هذا الأسبوع</option>
+              <option value="month" selected>هذا الشهر</option>
+              <option value="custom">فترة مخصصة</option>
+            </select>
+          </div>
+          <div class="form-group" id="report-custom-dates" style="display:none">
+            <label>من</label>
+            <input type="date" id="report-from" onchange="Reports.render()" />
+          </div>
+          <div class="form-group" id="report-custom-dates2" style="display:none">
+            <label>إلى</label>
+            <input type="date" id="report-to" onchange="Reports.render()" />
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-blue">
+          <div class="kpi-label">إجمالي الإيرادات</div>
+          <div class="kpi-value" id="rep-revenue">—</div>
+        </div>
+        <div class="kpi-card kpi-red">
+          <div class="kpi-label">إجمالي التكاليف</div>
+          <div class="kpi-value" id="rep-cost">—</div>
+        </div>
+        <div class="kpi-card kpi-green">
+          <div class="kpi-label">صافي الربح</div>
+          <div class="kpi-value" id="rep-profit">—</div>
+        </div>
+        <div class="kpi-card kpi-orange">
+          <div class="kpi-label">هامش الربح</div>
+          <div class="kpi-value" id="rep-margin">—</div>
+        </div>
+        <div class="kpi-card kpi-teal">
+          <div class="kpi-label">عدد القطع المباعة</div>
+          <div class="kpi-value" id="rep-units">—</div>
+        </div>
+        <div class="kpi-card kpi-purple">
+          <div class="kpi-label">متوسط سعر البيع</div>
+          <div class="kpi-value" id="rep-avg-price">—</div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="card">
+          <h3 class="card-title">📈 مبيعات حسب اليوم</h3>
+          <div id="rep-daily-breakdown" class="summary-block">لا توجد بيانات.</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1rem">
+        <div class="section-header" style="margin-bottom:.75rem">
+          <h3 class="card-title" style="margin-bottom:0">🧧 تفاصيل المبيعات</h3>
+          <span id="rep-sales-count" style="font-size:.82rem;color:var(--gray-500)"></span>
+        </div>
+        <div class="table-wrap">
+          <table id="rep-sales-table">
+            <thead>
+              <tr>
+                <th>التاريخ</th>
+                <th>الوصفة</th>
+                <th>النوع</th>
+                <th>الكمية</th>
+                <th>سعر البيع/وحدة</th>
+                <th>التكلفة/وحدة</th>
+                <th>الإيراد</th>
+                <th>إجمالي التكلفة</th>
+                <th>الربح</th>
+                <th>هامش الربح</th>
+              </tr>
+            </thead>
+            <tbody id="rep-sales-detail">
+              <tr><td colspan="10" class="empty-row">لا توجد بيانات.</td></tr>
+            </tbody>
+            <tfoot id="rep-sales-foot"></tfoot>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODALS
+  ═══════════════════════════════════════════════════════ -->
+
+  <!-- Modal: Add / Edit Ingredient -->
+  <div id="modal-ingredient" class="modal-overlay" onclick="UI.closeModalOnOverlay(event, 'modal-ingredient')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-ingredient-title">إضافة مكوّن</h3>
+        <button class="modal-close" onclick="UI.closeModal('modal-ingredient')">✕</button>
+      </div>
+      <form id="form-ingredient" onsubmit="Ingredients.save(event)">
+        <input type="hidden" id="ing-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label>اسم المكوّن <span class="req">*</span></label>
+            <input type="text" id="ing-name" required placeholder="مثال: سميد" />
+          </div>
+          <div class="form-group">
+            <label>التصنيف <span class="req">*</span></label>
+            <select id="ing-type" required>
+              <option value="food">🍞 مكوّن غذائي</option>
+              <option value="packaging">📦 تغليف وملصقات</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>الوحدة <span class="req">*</span></label>
+            <select id="ing-unit" required>
+              <option value="">اختر الوحدة</option>
+              <option value="كيلو">كيلو</option>
+              <option value="جرام">جرام</option>
+              <option value="لتر">لتر</option>
+              <option value="مل">مل</option>
+              <option value="حبة">حبة</option>
+              <option value="علبة">علبة</option>
+              <option value="كيس">كيس</option>
+              <option value="ملعقة كبيرة">ملعقة كبيرة</option>
+              <option value="أخرى">أخرى</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>سعر الشراء (لكل وحدة) <span class="req">*</span></label>
+            <input type="number" id="ing-price" required min="0" step="0.01" placeholder="0.00" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>الكمية الحالية في المخزون</label>
+            <input type="number" id="ing-stock" min="0" step="0.001" placeholder="0" value="0" />
+          </div>
+          <div class="form-group">
+            <label>الحد الأدنى للتنبيه <span style="color:var(--gray-400);font-size:.78rem">(اختياري)</span></label>
+            <input type="number" id="ing-min-stock" min="0" step="0.001" placeholder="0" value="0" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-ingredient')">إلغاء</button>
+          <button type="submit" class="btn btn-primary">حفظ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add Purchase -->
+  <div id="modal-purchase" class="modal-overlay" onclick="UI.closeModalOnOverlay(event, 'modal-purchase')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-purchase-title">تسجيل شراء</h3>
+        <button class="modal-close" onclick="UI.closeModal('modal-purchase')">✕</button>
+      </div>
+      <form id="form-purchase" onsubmit="Purchases.save(event)">
+        <input type="hidden" id="pur-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label>التاريخ <span class="req">*</span></label>
+            <input type="date" id="pur-date" required />
+          </div>
+          <div class="form-group">
+            <label>المكوّن <span class="req">*</span></label>
+            <select id="pur-ingredient" required onchange="Purchases.onIngredientChange()">
+              <option value="">اختر المكوّن</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>الكمية <span class="req">*</span></label>
+            <input type="number" id="pur-qty" required min="0.001" step="0.001" placeholder="0" oninput="Purchases.calcTotal()" />
+          </div>
+          <div class="form-group">
+            <label>سعر الوحدة <span class="req">*</span></label>
+            <input type="number" id="pur-price" required min="0" step="0.01" placeholder="0.00" oninput="Purchases.calcTotal()" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>الإجمالي</label>
+          <input type="text" id="pur-total" readonly class="readonly-input" placeholder="يُحسب تلقائياً" />
+        </div>
+        <div class="form-group">
+          <label>المورد (اختياري)</label>
+          <input type="text" id="pur-supplier" placeholder="اسم المورد أو المتجر" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-purchase')">إلغاء</button>
+          <button type="submit" class="btn btn-primary">حفظ وتحديث المخزون</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add / Edit Recipe -->
+  <div id="modal-recipe" class="modal-overlay" onclick="UI.closeModalOnOverlay(event, 'modal-recipe')">
+    <div class="modal modal-wide">
+      <div class="modal-header">
+        <h3 id="modal-recipe-title">إنشاء وصفة</h3>
+        <button class="modal-close" onclick="UI.closeModal('modal-recipe')">✕</button>
+      </div>
+      <form id="form-recipe" onsubmit="Recipes.save(event)">
+        <input type="hidden" id="rec-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label>اسم الوصفة <span class="req">*</span></label>
+            <input type="text" id="rec-name" required placeholder="مثال: بسبوسة كلاسيكية" />
+          </div>
+          <div class="form-group">
+            <label>عدد القطع من الصينية الواحدة <span class="req">*</span></label>
+            <input type="number" id="rec-pieces" required min="1" step="1" placeholder="مثال: 24"
+                   oninput="Recipes.calcCostPreview()" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>وصف (اختياري)</label>
+          <input type="text" id="rec-desc" placeholder="وصف مختصر للوصفة" />
+        </div>
+
+        <h4 class="sub-title">مكونات الوصفة</h4>
+        <div id="recipe-ingredients-list"></div>
+        <button type="button" class="btn btn-outline btn-sm" onclick="Recipes.addIngredientRow()">+ إضافة مكوّن</button>
+
+        <div class="cost-preview card" id="recipe-cost-preview" style="margin-top:1rem; display:none">
+          <strong>تكلفة الصينية الواحدة:</strong> <span id="recipe-tray-cost">—</span> &nbsp;|&nbsp;
+          <strong>تكلفة القطعة:</strong> <span id="recipe-piece-cost">—</span>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-recipe')">إلغاء</button>
+          <button type="submit" class="btn btn-primary">حفظ الوصفة</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add Production -->
+  <div id="modal-production" class="modal-overlay" onclick="UI.closeModalOnOverlay(event, 'modal-production')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>تسجيل إنتاج</h3>
+        <button class="modal-close" onclick="UI.closeModal('modal-production')">✕</button>
+      </div>
+      <form id="form-production" onsubmit="Productions.save(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>التاريخ <span class="req">*</span></label>
+            <input type="date" id="prod-date" required />
+          </div>
+          <div class="form-group">
+            <label>الوصفة <span class="req">*</span></label>
+            <select id="prod-recipe" required onchange="Productions.onRecipeChange()">
+              <option value="">اختر الوصفة</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>عدد الصوانٍ <span class="req">*</span></label>
+            <input type="number" id="prod-trays" required min="1" step="1" value="1"
+                   oninput="Productions.calcPreview()" />
+          </div>
+          <div class="form-group">
+            <label>عدد القطع الكلي</label>
+            <input type="text" id="prod-pieces" readonly class="readonly-input" />
+          </div>
+        </div>
+        <div class="form-group cost-preview card" id="prod-cost-preview" style="display:none; margin-top:.5rem">
+          <strong>تكلفة الإنتاج:</strong> <span id="prod-total-cost">—</span> &nbsp;|&nbsp;
+          <strong>تكلفة القطعة:</strong> <span id="prod-cost-piece">—</span>
+        </div>
+        <div class="form-group">
+          <label>ملاحظات</label>
+          <input type="text" id="prod-notes" placeholder="ملاحظات اختيارية" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-production')">إلغاء</button>
+          <button type="submit" class="btn btn-primary">تسجيل الإنتاج</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add Sale -->
+  <div id="modal-sale" class="modal-overlay" onclick="UI.closeModalOnOverlay(event, 'modal-sale')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>تسجيل بيع</h3>
+        <button class="modal-close" onclick="UI.closeModal('modal-sale')">✕</button>
+      </div>
+      <form id="form-sale" onsubmit="Sales.save(event)">
+        <input type="hidden" id="sale-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label>التاريخ <span class="req">*</span></label>
+            <input type="date" id="sale-date" required />
+          </div>
+          <div class="form-group">
+            <label>نوع المنتج <span class="req">*</span></label>
+            <select id="sale-type" required onchange="Sales.onTypeChange()">
+              <option value="piece">قطعة بسبوسة</option>
+              <option value="tray">صينية كاملة</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>الوصفة <span class="req">*</span></label>
+          <select id="sale-recipe" required onchange="Sales.onRecipeChange()">
+            <option value="">اختر الوصفة</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>الكمية <span class="req">*</span></label>
+            <input type="number" id="sale-qty" required min="1" step="1" value="1"
+                   oninput="Sales.calcPreview()" />
+          </div>
+          <div class="form-group">
+            <label>سعر البيع لكل وحدة <span class="req">*</span></label>
+            <input type="number" id="sale-price" required min="0" step="0.01" placeholder="0.00"
+                   oninput="Sales.calcPreview()" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>تكلفة الوحدة (من آخر إنتاج)</label>
+          <input type="text" id="sale-cost" class="readonly-input" readonly placeholder="يُحسب تلقائياً" />
+        </div>
+        <div class="form-group cost-preview card" id="sale-preview" style="display:none; margin-top:.3rem">
+          <strong>الإيراد:</strong> <span id="sale-revenue-preview">—</span> &nbsp;|&nbsp;
+          <strong>الربح:</strong> <span id="sale-profit-preview">—</span>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-sale')">إلغاء</button>
+          <button type="submit" class="btn btn-primary">حفظ البيع</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Confirm Dialog -->
+  <div id="modal-confirm" class="modal-overlay">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3>تأكيد الحذف</h3>
+      </div>
+      <div style="padding:1rem; text-align:center">
+        <p id="confirm-message">هل أنت متأكد من الحذف؟</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="UI.closeModal('modal-confirm')">إلغاء</button>
+        <button class="btn btn-danger" id="confirm-ok-btn">حذف</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/db.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
