@@ -827,7 +827,7 @@ const Reports = (() => {
 
       // Totals footer
       const totMargin = revenue > 0 ? ((profit / revenue) * 100).toFixed(1) + '%' : '—';
-      footEl.innerHTML = `<tr style="background:var(--primary-light);font-weight:700;color:var(--primary-dark)">
+      footEl.innerHTML = `<tr style="background:#eef0fb;font-weight:700;color:#2D2E83;border-top:2px solid #BFC9F7">
         <td colspan="3">الإجمالي</td>
         <td>${units}</td>
         <td>—</td>
@@ -893,25 +893,48 @@ const Dashboard = (() => {
         <div>✅ ربح اليوم: <strong class="${tProfit >= 0 ? 'profit-positive' : 'profit-negative'}">${DB.Fmt.aed(tProfit)}</strong></div>`;
     }
 
-    // Low stock alert — uses per-ingredient minStock threshold
-    const ings = DB.Ingredients.getAll().filter(i => {
+    // تنبيه المخزون — يقرأ كل مكوّن مباشرة ويتحقق من الحد الأدنى
+    const allIngs   = DB.Ingredients.getAll();
+    const emptyIngs = allIngs.filter(i => i.stockQuantity <= 0);
+    const lowIngs   = allIngs.filter(i => {
       const min = parseFloat(i.minStock) || 0;
-      return min > 0 ? i.stockQuantity <= min : i.stockQuantity === 0;
+      return min > 0 && i.stockQuantity > 0 && i.stockQuantity <= min;
     });
+
     const stockEl    = document.getElementById('dash-low-stock');
     const stockTitle = document.getElementById('dash-low-stock-title');
-    if (ings.length === 0) {
+
+    if (emptyIngs.length === 0 && lowIngs.length === 0) {
       stockTitle.textContent = '📦 حالة المخزون';
       stockEl.innerHTML = '<span style="color:var(--green)">✔ المخزون كافٍ لجميع المكونات.</span>';
     } else {
-      stockTitle.textContent = `⚠️ مخزون منخفض (${ings.length})`;
-      stockEl.innerHTML = ings.map(i => {
-        const min = parseFloat(i.minStock) || 0;
-        const hint = min > 0
-          ? ` — متبقي: ${DB.Fmt.qty(i.stockQuantity)} من ${DB.Fmt.qty(min)} ${esc(i.unit)}`
-          : ` — نفد المخزون!`;
-        return `<div>⚠️ <strong>${esc(i.name)}</strong>${hint}</div>`;
-      }).join('');
+      const total = emptyIngs.length + lowIngs.length;
+      stockTitle.textContent = `⚠️ مخزون منخفض (${total})`;
+      let html = '';
+
+      emptyIngs.forEach(i => {
+        html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:.3rem 0;border-bottom:1px solid #f3f4f6">
+          <span>🔴 <strong>${esc(i.name)}</strong></span>
+          <span style="color:var(--red);font-weight:600;font-size:.85rem">نفد المخزون!</span>
+        </div>`;
+      });
+
+      lowIngs.forEach(i => {
+        const min = parseFloat(i.minStock);
+        const pct = Math.round((i.stockQuantity / min) * 100);
+        const barColor = pct <= 25 ? 'var(--red)' : 'var(--orange)';
+        html += `<div style="padding:.3rem 0;border-bottom:1px solid #f3f4f6">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span>🟡 <strong>${esc(i.name)}</strong></span>
+            <span style="color:var(--orange);font-size:.85rem">${DB.Fmt.qty(i.stockQuantity)} / ${DB.Fmt.qty(min)} ${esc(i.unit)}</span>
+          </div>
+          <div style="background:#e5e7eb;border-radius:4px;height:5px;margin-top:.3rem">
+            <div style="background:${barColor};width:${Math.min(pct,100)}%;height:5px;border-radius:4px;transition:.3s"></div>
+          </div>
+        </div>`;
+      });
+
+      stockEl.innerHTML = html;
     }
 
     // Recent sales (last 5)

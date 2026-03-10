@@ -7,19 +7,21 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --primary:      #6c4de6;
-  --primary-dark: #5438c3;
-  --primary-light:#ede9ff;
+  --primary:      #2D2E83;
+  --primary-dark: #1e1f5c;
+  --primary-light:#eef0fb;
+  --accent:       #FB72BC;
+  --accent-light: #fde8f4;
   --green:        #16a34a;
   --green-light:  #dcfce7;
   --red:          #dc2626;
   --red-light:    #fee2e2;
   --orange:       #ea580c;
   --orange-light: #ffedd5;
-  --blue:         #2563eb;
-  --blue-light:   #dbeafe;
-  --purple:       #7c3aed;
-  --purple-light: #ede9fe;
+  --blue:         #2D2E83;
+  --blue-light:   #BFC9F7;
+  --purple:       #6061A1;
+  --purple-light: #eef0fb;
   --teal:         #0d9488;
   --teal-light:   #ccfbf1;
   --gray-50:      #f9fafb;
@@ -49,13 +51,13 @@ body {
 
 /* ----- Header ----- */
 .app-header {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  background: linear-gradient(135deg, #2D2E83 0%, #FB72BC 100%);
   color: var(--white);
   padding: 0 1.5rem;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 12px rgba(108,77,230,0.25);
+  box-shadow: 0 2px 12px rgba(45,46,131,0.30);
 }
 
 .header-inner {
@@ -74,6 +76,36 @@ body {
 }
 
 .brand-icon { font-size: 2rem; }
+
+.brand-logo {
+  height: 52px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* لوقو لوحة التحكم */
+.dash-logo-banner {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0 0.5rem;
+}
+
+.dash-logo {
+  height: 160px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 16px;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.18));
+}
+
+.tab-logo {
+  height: 22px;
+  width: auto;
+  object-fit: contain;
+  vertical-align: middle;
+  border-radius: 4px;
+}
 
 .brand h1 {
   font-size: 1.25rem;
@@ -127,7 +159,7 @@ body {
 .tab-btn:hover { color: var(--primary); }
 .tab-btn.active {
   color: var(--primary);
-  border-bottom-color: var(--primary);
+  border-bottom-color: var(--accent);
   font-weight: 600;
 }
 
