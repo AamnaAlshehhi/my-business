@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>نظام إدارة حلويات البسبوسة</title>
+  <title>نظام دوزينة سكر لإدارة حلويات البسبوسة</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -14,7 +14,7 @@
       <div class="brand">
         <span class="brand-icon">🍰</span>
         <div>
-          <h1>نظام إدارة البسبوسة</h1>
+          <h1>نظام دوزينة سكر لإدارة حلويات البسبوسة</h1>
           <p class="brand-sub">تتبع التكاليف · الوصفات · المبيعات · الأرباح</p>
         </div>
       </div>
@@ -81,7 +81,7 @@
           <div id="dash-today-summary" class="summary-block">لا توجد مبيعات اليوم.</div>
         </div>
         <div class="card">
-          <h3 id="dash-low-stock-title" class="card-title">📦 حالة المخزون</h3>
+          <h3 class="card-title">⚠️ مخزون منخفض</h3>
           <div id="dash-low-stock" class="summary-block">المخزون كافٍ.</div>
         </div>
         <div class="card">
@@ -120,13 +120,12 @@
                 <th>الوحدة</th>
                 <th>سعر الشراء</th>
                 <th>الكمية في المخزون</th>
-                <th>الحد الأدنى</th>
                 <th>قيمة المخزون</th>
                 <th>إجراءات</th>
               </tr>
             </thead>
             <tbody id="tbody-ingredients">
-              <tr><td colspan="9" class="empty-row">لا توجد مكونات مضافة بعد.</td></tr>
+              <tr><td colspan="8" class="empty-row">لا توجد مكونات مضافة بعد.</td></tr>
             </tbody>
           </table>
         </div>
@@ -303,34 +302,9 @@
           <h3 class="card-title">📈 مبيعات حسب اليوم</h3>
           <div id="rep-daily-breakdown" class="summary-block">لا توجد بيانات.</div>
         </div>
-      </div>
-
-      <div class="card" style="margin-top:1rem">
-        <div class="section-header" style="margin-bottom:.75rem">
-          <h3 class="card-title" style="margin-bottom:0">🧧 تفاصيل المبيعات</h3>
-          <span id="rep-sales-count" style="font-size:.82rem;color:var(--gray-500)"></span>
-        </div>
-        <div class="table-wrap">
-          <table id="rep-sales-table">
-            <thead>
-              <tr>
-                <th>التاريخ</th>
-                <th>الوصفة</th>
-                <th>النوع</th>
-                <th>الكمية</th>
-                <th>سعر البيع/وحدة</th>
-                <th>التكلفة/وحدة</th>
-                <th>الإيراد</th>
-                <th>إجمالي التكلفة</th>
-                <th>الربح</th>
-                <th>هامش الربح</th>
-              </tr>
-            </thead>
-            <tbody id="rep-sales-detail">
-              <tr><td colspan="10" class="empty-row">لا توجد بيانات.</td></tr>
-            </tbody>
-            <tfoot id="rep-sales-foot"></tfoot>
-          </table>
+        <div class="card">
+          <h3 class="card-title">🧾 تفاصيل المبيعات</h3>
+          <div id="rep-sales-detail" class="summary-block">لا توجد بيانات.</div>
         </div>
       </div>
     </section>
@@ -384,15 +358,9 @@
             <input type="number" id="ing-price" required min="0" step="0.01" placeholder="0.00" />
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>الكمية الحالية في المخزون</label>
-            <input type="number" id="ing-stock" min="0" step="0.001" placeholder="0" value="0" />
-          </div>
-          <div class="form-group">
-            <label>الحد الأدنى للتنبيه <span style="color:var(--gray-400);font-size:.78rem">(اختياري)</span></label>
-            <input type="number" id="ing-min-stock" min="0" step="0.001" placeholder="0" value="0" />
-          </div>
+        <div class="form-group">
+          <label>الكمية الحالية في المخزون</label>
+          <input type="number" id="ing-stock" min="0" step="0.001" placeholder="0" value="0" />
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-ingredient')">إلغاء</button>
