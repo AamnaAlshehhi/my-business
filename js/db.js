@@ -265,7 +265,7 @@ const DB = (() => {
     },
 
     /** type: 'piece' | 'tray' */
-    add({ date, productType, quantity, sellingPricePerUnit, costPerUnit, recipeId, recipeName }) {
+    add({ date, productType, quantity, sellingPricePerUnit, costPerUnit, recipeId, recipeName, invoiceNo, customerName }) {
       const all = load(KEYS.sales);
       const qty       = parseInt(quantity);
       const sellPrice = parseFloat(sellingPricePerUnit);
@@ -290,6 +290,8 @@ const DB = (() => {
         totalRevenue: revenue,
         totalCost,
         profit,
+        invoiceNo:    (invoiceNo    || '').trim(),
+        customerName: (customerName || '').trim(),
         createdAt: now(),
       };
       all.push(record);

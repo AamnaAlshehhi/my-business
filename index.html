@@ -231,6 +231,8 @@
           <table>
             <thead>
               <tr>
+                <th>رقم الفاتورة</th>
+                <th>اسم المشتري</th>
                 <th>التاريخ</th>
                 <th>الوصفة</th>
                 <th>النوع</th>
@@ -243,7 +245,7 @@
               </tr>
             </thead>
             <tbody id="tbody-sales">
-              <tr><td colspan="9" class="empty-row">لا توجد مبيعات مسجلة.</td></tr>
+              <tr><td colspan="11" class="empty-row">لا توجد مبيعات مسجلة.</td></tr>
             </tbody>
           </table>
         </div>
@@ -554,6 +556,16 @@
       </div>
       <form id="form-sale" onsubmit="Sales.save(event)">
         <input type="hidden" id="sale-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label>رقم الفاتورة</label>
+            <input type="text" id="sale-invoice" placeholder="مثال: INV-001" />
+          </div>
+          <div class="form-group">
+            <label>اسم المشتري</label>
+            <input type="text" id="sale-customer" placeholder="اختياري" />
+          </div>
+        </div>
         <div class="form-row">
           <div class="form-group">
             <label>التاريخ <span class="req">*</span></label>

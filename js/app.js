@@ -622,17 +622,20 @@ const Sales = (() => {
     const tbody = document.getElementById('tbody-sales');
     const data  = DB.Sales.getAll();
     if (data.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" class="empty-row">لا توجد مبيعات مسجلة.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="11" class="empty-row">لا توجد مبيعات مسجلة.</td></tr>';
       return;
     }
     tbody.innerHTML = data.map(s => {
       const profitClass = s.profit >= 0 ? 'profit-positive' : 'profit-negative';
       const typeLabel   = s.productType === 'tray' ? 'صينية' : 'قطعة';
       const typeBadge   = s.productType === 'tray' ? 'badge-orange' : 'badge-green';
-      // Support old records that have no recipeName
-      const recName = s.recipeName || (s.productName || '—');
+      const recName     = s.recipeName || (s.productName || '—');
+      const invoice     = s.invoiceNo     ? `<span class="badge badge-blue">${esc(s.invoiceNo)}</span>`     : '<span style="color:var(--gray-300)">—</span>';
+      const customer    = s.customerName  ? `<strong>${esc(s.customerName)}</strong>`  : '<span style="color:var(--gray-300)">—</span>';
       return `
       <tr>
+        <td>${invoice}</td>
+        <td>${customer}</td>
         <td>${DB.DateUtil.formatAr(s.date)}</td>
         <td><strong>${esc(recName)}</strong></td>
         <td><span class="badge ${typeBadge}">${typeLabel}</span></td>
@@ -651,6 +654,8 @@ const Sales = (() => {
   function openAdd() {
     document.getElementById('form-sale').reset();
     UI.setVal('sale-id', '');
+    UI.setVal('sale-invoice', '');
+    UI.setVal('sale-customer', '');
     UI.setVal('sale-date', DB.DateUtil.today());
     UI.setVal('sale-qty', '1');
     document.getElementById('sale-preview').style.display = 'none';
@@ -706,6 +711,8 @@ const Sales = (() => {
       costPerUnit:         document.getElementById('sale-cost').value,
       recipeId,
       recipeName:          recipe ? recipe.name : '',
+      invoiceNo:           UI.val('sale-invoice'),
+      customerName:        UI.val('sale-customer'),
     });
     UI.closeModal('modal-sale');
     UI.toast('تم تسجيل البيع ✔', 'success');
